@@ -1,0 +1,54 @@
+import hashlib
+import tkinter as tk
+from tkinter import messagebox
+
+def md5(file_path):
+    hash_md5 = hashlib.md5()
+    with open(file_path, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
+
+def check_update():
+    original_file = "original_file.bin"
+    update_file = "update_file.bin"
+    
+    original_md5 = md5(original_file)
+    update_md5 = md5(update_file)
+    
+    if original_md5 == update_md5:
+        result = "Les fichiers ont la même hash MD5.\nTa perdu"
+        skull_art = """
+              .-.
+             (o o)
+             | O |
+              \|/
+              ' '
+        """
+        messagebox.showinfo("Résultat", result + skull_art)
+    else:
+        result = "Les fichiers ont des hash différents."
+        messagebox.showinfo("Résultat", result)
+
+def propose_update():
+    response = messagebox.askyesno("Mise à jour disponible", "Une mise à jour est disponible. Voulez-vous l'installer ?")
+    if response:
+        check_update()
+    else:
+        messagebox.showinfo("Mise à jour", "Mise à jour annulée.")
+
+def main():
+    root = tk.Tk()
+    root.title("Vérificateur de Mise à jour")
+    root.geometry("300x200")
+
+    label = tk.Label(root, text="Bienvenue dans le vérificateur de mise à jour")
+    label.pack(pady=20)
+
+    update_button = tk.Button(root, text="Vérifier la mise à jour", command=propose_update)
+    update_button.pack(pady=20)
+
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
